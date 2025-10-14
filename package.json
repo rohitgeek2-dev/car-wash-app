@@ -1,0 +1,35 @@
+{
+  "name": "carwash",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
+    "@prisma/client": "^6.17.1",
+    "bootstrap": "^5.3.6",
+    "font-awesome": "^4.7.0",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.545.0",
+    "mongoose": "^8.15.1",
+    "next": "15.3.3",
+    "nodemailer": "^7.0.9",
+    "prisma": "^6.17.1",
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}

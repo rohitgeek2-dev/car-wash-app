@@ -1,0 +1,268 @@
+/* ============== Variables ============== */
+:root {
+  --theme: #2a9d8f;
+  --theme-dark: #21867a;
+  --theme-light: #76c7ba;
+  --white: #ffffff;
+  --black: #222222;
+  --gray-light: #f8f9fa;
+  --gray-medium: #e9ecef;
+  --gray-dark: #495057;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ============== Hero Section ============== */
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
+  color: var(--theme-light) !important;
+}
+.hero {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("/car-wash.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero .overlay {
+    width: 100%;
+    padding: 100px 0;
+    background-color: rgb(0 0 0 / 30%);
+}
+
+.hero .hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--white);
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero h1 .highlight {
+  color: var(--theme-light);
+  position: relative;
+  display: inline-block;
+}
+
+.hero h1 .highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: rgb(42 157 143 / 46%);
+  z-index: -1;
+}
+
+.hero .hero-desc {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+}
+
+.hero .cta-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero .hero-btn {
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: var(--transition);
+  font-size: 0.9rem;
+  border: 2px solid transparent;
+}
+
+.hero .btn-primary {
+  background-color: var(--theme);
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hero .btn-primary:hover {
+  background-color: var(--theme-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hero .btn-secondary {
+  background-color: transparent;
+  color: var(--white);
+  border-color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hero .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ============== Why Choose Us Section ============== */
+.why-choose-us {
+  background-color: var(--gray-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.why-choose-us .section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+}
+
+.why-choose-us .section-tagline {
+  display: inline-block;
+  color: var(--theme);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.why-choose-us h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: var(--black);
+  position: relative;
+  display: inline-block;
+}
+
+.why-choose-us h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: var(--theme);
+}
+
+.why-choose-us .section-intro {
+  color: var(--gray-dark);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--theme);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 1.5rem auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--white);
+}
+
+.eco-icon { background: linear-gradient(135deg, #2a9d8f, #76c7ba); }
+.expert-icon { background: linear-gradient(135deg, #e9c46a, #f4a261); }
+.tech-icon { background: linear-gradient(135deg, #264653, #2a9d8f); }
+
+.feature-card h4 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--black);
+}
+
+.feature-card p {
+  color: var(--gray-dark);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* ============== Stats Section ============== */
+.stats-section {
+  background-color: var(--theme);
+  color: var(--white);
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.stat-item {
+  padding: 1.5rem;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+/* ============== Responsive Adjustments ============== */
+@media (max-width: 767px) {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .hero .hero-desc {
+    font-size: 1rem;
+  }
+  
+  .why-choose-us h2 {
+    font-size: 1.8rem;
+  }
+  
+  .stat-number {
+    font-size: 2.2rem;
+  }
+}

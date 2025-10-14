@@ -1,0 +1,113 @@
+/* Optional smooth transition */
+.transition-navbar {
+  transition: top 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Sticky navbar when scrolled */
+.sticky-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030; /* Above most elements */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  animation: slideDown 0.5s ease !important;
+}
+
+/* Optional animation */
+@keyframes slideDown {
+  from {
+    top: -100px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.main-header {
+    background-color: var(--foreground) !important;
+}
+
+.navbar-toggler{
+  border: none;
+  position: relative;
+}
+
+.custom-hamburger-btn {
+    border: none;
+    background-color: transparent;
+    color: var(--white);
+}
+
+.navbar-toggler span{
+  display: none;
+}
+
+/* .navbar-toggler::before{
+  content: "\f550";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+} */
+
+.navbar-brand {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-poppins);
+    text-transform: uppercase;
+}
+
+.navbar-brand:hover{
+  color: var(--white);
+}
+
+.navbar-nav .nav-link{
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 991px) {
+  .collapse:not(.show) {
+    position: static;
+}
+
+  .collapse:not(.show) {
+    position: static;
+    left: -25%;
+    transition: all .3s ease-in-out;
+}
+.navbar-collapse .navbar-nav {
+    z-index: 999;
+    background-color: var(--theme);
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    height: 100vh;
+    max-width: 25%;
+    padding: 0 20px;
+    transition: all .3s ease-in-out;
+}
+}
+
+@media screen and (max-width: 767px) {
+  .navbar-collapse .navbar-nav {
+    max-width: 50%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .navbar-collapse .navbar-nav {
+    max-width: 80%;
+  }
+}

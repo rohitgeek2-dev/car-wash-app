@@ -1,0 +1,176 @@
+.about-form {
+    width: 100%;
+    max-width: 630px;
+    margin: 0 auto;
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ebebeb;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.about-form input:focus{
+    box-shadow: none;
+}
+
+.about-form input {
+    flex-grow: 1;
+}
+
+.about-form .firstname, .about-form .mname, .about-form .lname{
+    flex-basis: 196px;
+}
+
+.about-form .email{
+    width: 100%;
+}
+
+.about-form .company{
+    flex-basis: 299px;
+}
+
+.about-form button[type="submit"]{
+    width: 100% !important;
+}
+
+/* New CSS for redesigned page */
+.hero {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("/car-wash.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.hero-desc {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.section-tagline {
+    color: var(--theme);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-header h2 {
+    color: var(--black);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.section-intro {
+    color: var(--gray-dark);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card h4 {
+    color: var(--black);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: var(--gray-dark);
+    line-height: 1.6;
+}
+
+.form-section {
+    background: var(--gray-light);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+}
+
+.form-section h3 {
+    color: var(--black);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.form-section p {
+    color: var(--gray-dark);
+}
+
+.name-fields, .company-fields {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.submit-btn {
+    background: var(--theme);
+    border: none;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.submit-btn:hover {
+    background: var(--theme-dark);
+    transform: translateY(-2px);
+}
+
+.status-message {
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 5px;
+    background: var(--gray-medium);
+}
+
+.feature-icon {
+    color: var(--theme);
+}
+
+@media (max-width: 767px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-desc {
+        font-size: 1.1rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .name-fields, .company-fields {
+        flex-direction: column;
+    }
+    
+    .name-fields .form-control,
+    .company-fields .form-control {
+        flex-basis: 100% !important;
+    }
+}
