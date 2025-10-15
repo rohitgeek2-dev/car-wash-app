@@ -1,4 +1,3 @@
-// src/app/services/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -25,7 +24,20 @@ export default function ServicesPage() {
   };
 
   const handleConfirm = async () => {
-    if (isSubmitting) return; // prevent double click
+    // Basic validation
+    if (
+      !formData.service ||
+      !formData.date ||
+      !formData.time ||
+      !formData.carType ||
+      !formData.name ||
+      !formData.email
+    ) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     try {
@@ -35,13 +47,23 @@ export default function ServicesPage() {
         body: JSON.stringify({ ...formData, status: 'Pending' }),
       });
 
-      const result = await res.json();
-
-      if (res.ok) {
-        alert('Appointment Confirmed!');
-      } else {
+      if (!res.ok) {
+        const result = await res.json();
         alert(result.error || 'Failed to confirm appointment.');
+        return;
       }
+
+      alert('Appointment Confirmed!');
+      // Optional: reset form
+      setFormData({
+        service: '',
+        date: '',
+        time: '',
+        carType: '',
+        name: '',
+        email: '',
+      });
+      setStep(1);
     } catch (err) {
       console.error(err);
       alert('An error occurred.');
@@ -51,55 +73,71 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="container py-5">
-      {step === 1 && (
-        <Step1ServiceType
-          selected={formData.service}
-          onSelect={(val) => {
-            setFormData({ ...formData, service: val });
-            setStep(2);
-          }}
-        />
-      )}
-
-      {step === 2 && (
-        <Step2DateTime
-          selectedDate={formData.date}
-          selectedTime={formData.time}
-          onSelect={(date, time) => {
-            setFormData({ ...formData, date, time });
-            setStep(3);
-          }}
-        />
-      )}
-
-      {step === 3 && (
-        <Step3CarType
-          selected={formData.carType}
-          onSelect={(type) => {
-            setFormData({ ...formData, carType: type });
-            setStep(4);
-          }}
-        />
-      )}
-
-      {step === 4 && (
-        <Step4Review
-          data={formData}
-          setFormData={setFormData} // lift name/email state up
-          onConfirm={handleConfirm}
-          isSubmitting={isSubmitting}
-          onEdit={() => setStep(1)}
-        />
-      )}
-
-      {step > 1 && step < 4 && (
-        <div className="mt-4">
-          <button className="btn btn-secondary" onClick={handleBack}>
-            Back
-          </button>
+    <div>
+      {/* Hero Section */}
+      <div className="hero">
+        <div className="overlay">
+          <div className="container hero-content">
+            <h1>Our Services</h1>
+            <p className="hero-desc">
+              Transforming vehicle care with premium services and unmatched expertise
+            </p>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Multi-Step Form */}
+      <div className="container py-5">
+        {step === 1 && (
+          <Step1ServiceType
+            selected={formData.service}
+            onSelect={(val) => {
+              setFormData({ ...formData, service: val });
+              setStep(2);
+            }}
+          />
+        )}
+
+        {step === 2 && (
+          <Step2DateTime
+            selectedDate={formData.date}
+            selectedTime={formData.time}
+            onSelect={(date, time) => {
+              setFormData({ ...formData, date, time });
+              setStep(3);
+            }}
+          />
+        )}
+
+        {step === 3 && (
+          <Step3CarType
+            selected={formData.carType}
+            onSelect={(type) => {
+              setFormData({ ...formData, carType: type });
+              setStep(4);
+            }}
+          />
+        )}
+
+        {step === 4 && (
+          <Step4Review
+            data={formData}
+            setFormData={setFormData}
+            onConfirm={handleConfirm}
+            isSubmitting={isSubmitting}
+            onEdit={() => setStep(1)} // consider allowing editing individual fields
+          />
+        )}
+
+        {/* Back button */}
+        {step > 1 && (
+          <div className="mt-4">
+            <button className="btn btn-secondary" onClick={handleBack}>
+              Back
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
