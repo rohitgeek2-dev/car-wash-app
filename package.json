@@ -24,6 +24,7 @@
     "prisma": "^6.17.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.10",
+    "react-datepicker": "^8.8.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
