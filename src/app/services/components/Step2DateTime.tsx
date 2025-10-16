@@ -1,16 +1,23 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) {
-  const [date, setDate] = useState(selectedDate ? new Date(selectedDate) : null);
+interface Step2DateTimeProps {
+  selectedDate?: string;
+  selectedTime?: string;
+  onSelect: (date: string, time: string) => void;
+}
+
+export default function Step2DateTime({ selectedDate, selectedTime, onSelect }: Step2DateTimeProps) {
+  const [date, setDate] = useState<Date | null>(selectedDate ? new Date(selectedDate) : null);
   const [time, setTime] = useState(selectedTime || '');
   const [error, setError] = useState('');
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
 
   // Generate time slots dynamically from 9 AM to 6 PM
   const timeSlots = useMemo(() => {
-    const slots = [];
+    const slots: string[] = [];
     for (let hour = 9; hour <= 17; hour++) {
       const ampm = hour < 12 ? 'AM' : 'PM';
       const displayHour = hour > 12 ? hour - 12 : hour;
@@ -18,6 +25,16 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
     }
     return slots;
   }, []);
+
+  // Fetch booked slots whenever date changes
+  useEffect(() => {
+    if (!date) return;
+    const formattedDate = date.toISOString().split('T')[0];
+    fetch(`/api/appointments?date=${formattedDate}`)
+      .then(res => res.json())
+      .then((data) => setBookedSlots(data))
+      .catch(err => console.error(err));
+  }, [date]);
 
   const handleSubmit = () => {
     if (!date || !time) {
@@ -28,8 +45,7 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
     }
   };
 
-  // Disable weekends
-  const isWeekday = (date) => {
+  const isWeekday = (date: Date) => {
     const day = date.getDay();
     return day !== 0 && day !== 6;
   };
@@ -42,7 +58,7 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
         <label className="form-label">Select Date</label>
         <DatePicker
           selected={date}
-          onChange={(date) => setDate(date)}
+          onChange={(d) => setDate(d)}
           filterDate={isWeekday}
           placeholderText="Select a date"
           className="form-control"
@@ -60,7 +76,9 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
         >
           <option value="">Select a Time</option>
           {timeSlots.map((slot) => (
-            <option key={slot} value={slot}>{slot}</option>
+            <option key={slot} value={slot} disabled={bookedSlots.includes(slot)}>
+              {slot} {bookedSlots.includes(slot) ? '(Booked)' : ''}
+            </option>
           ))}
         </select>
       </div>

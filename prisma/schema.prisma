@@ -17,4 +17,7 @@ model Appointment {
   email     String
   status    String   @default("Pending")
   createdAt DateTime @default(now())
+
+  @@unique([date, time]) // ✅ ensures a time slot can be booked only once per date
 }
+
