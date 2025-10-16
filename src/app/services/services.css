@@ -33,6 +33,10 @@
   justify-content: center;
 }
 
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
 .service-card {
   background-color: #f7730212;
   border: 2px solid transparent;

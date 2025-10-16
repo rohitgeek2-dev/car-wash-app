@@ -1,25 +1,37 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) {
-  const [date, setDate] = useState(selectedDate || '');
+  const [date, setDate] = useState(selectedDate ? new Date(selectedDate) : null);
   const [time, setTime] = useState(selectedTime || '');
   const [error, setError] = useState('');
 
-  const isWeekend = (dateStr) => {
-    const day = new Date(dateStr).getDay();
-    return day === 0 || day === 6;
-  };
+  // Generate time slots dynamically from 9 AM to 6 PM
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    for (let hour = 9; hour <= 17; hour++) {
+      const ampm = hour < 12 ? 'AM' : 'PM';
+      const displayHour = hour > 12 ? hour - 12 : hour;
+      slots.push(`${displayHour.toString().padStart(2, '0')}:00 ${ampm}`);
+    }
+    return slots;
+  }, []);
 
   const handleSubmit = () => {
     if (!date || !time) {
       setError('Please select both a date and time.');
-    } else if (isWeekend(date)) {
-      setError('We do not accept bookings on weekends. Please select a weekday.');
     } else {
       setError('');
-      onSelect(date, time);
+      onSelect(date.toISOString().split('T')[0], time);
     }
+  };
+
+  // Disable weekends
+  const isWeekday = (date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
   };
 
   return (
@@ -28,15 +40,18 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
 
       <div className="form-group">
         <label className="form-label">Select Date</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+        <DatePicker
+          selected={date}
+          onChange={(date) => setDate(date)}
+          filterDate={isWeekday}
+          placeholderText="Select a date"
           className="form-control"
+          dateFormat="dd/MM/yyyy"
+          minDate={new Date()}
         />
       </div>
 
-      <div className="form-group">
+      <div className="form-group mt-3">
         <label className="form-label">Select Time</label>
         <select
           value={time}
@@ -44,11 +59,9 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }) 
           className="form-select"
         >
           <option value="">Select a Time</option>
-          <option>09:00 AM</option>
-          <option>11:00 AM</option>
-          <option>01:00 PM</option>
-          <option>03:00 PM</option>
-          <option>05:00 PM</option>
+          {timeSlots.map((slot) => (
+            <option key={slot} value={slot}>{slot}</option>
+          ))}
         </select>
       </div>
 
