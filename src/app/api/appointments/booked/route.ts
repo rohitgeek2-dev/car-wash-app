@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
+import { Appointment } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,14 +17,14 @@ export async function GET(req: NextRequest) {
     });
 
 
-   const bookedTimes = bookings.map((b) => {
-      let [hourStr, minuteStr] = b.time.split(':');
-      let hour = parseInt(hourStr);
-      const minute = minuteStr || '00';
-      const period = hour >= 12 ? 'PM' : 'AM';
-      hour = hour % 12 === 0 ? 12 : hour % 12;
-      return `${hour.toString().padStart(2, '0')}:${minute} ${period}`;
-    });
+   const bookedTimes = bookings.map((b: Appointment) => {
+    let [hourStr, minuteStr] = b.time.split(':');
+    let hour = parseInt(hourStr);
+    const minute = minuteStr || '00';
+    const period = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour.toString().padStart(2, '0')}:${minute} ${period}`;
+  });
 
    return NextResponse.json({ bookedTimes });
 }
