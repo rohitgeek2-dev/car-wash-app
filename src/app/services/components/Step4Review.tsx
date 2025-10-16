@@ -1,7 +1,32 @@
 'use client';
 import React from 'react';
 
-export default function Step4Review({ data, setFormData, onEdit, onConfirm, isSubmitting }) {
+// Define the shape of your form data
+interface FormData {
+  service: string;
+  date: string;
+  time: string;
+  carType: string;
+  name: string;
+  email: string;
+}
+
+// Props for Step4Review component
+interface Step4ReviewProps {
+  data: FormData;
+  setFormData: (data: FormData) => void;
+  onEdit: () => void;
+  onConfirm: () => void;
+  isSubmitting: boolean;
+}
+
+export default function Step4Review({
+  data,
+  setFormData,
+  onEdit,
+  onConfirm,
+  isSubmitting,
+}: Step4ReviewProps) {
   return (
     <div className="step4-review-container">
       <h2 className="step4-title">Review Your Appointment</h2>

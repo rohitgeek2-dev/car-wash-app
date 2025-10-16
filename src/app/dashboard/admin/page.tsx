@@ -1,15 +1,24 @@
 'use client';
 import { useEffect, useState } from 'react';
 
+// Define the appointment type
+interface Appointment {
+  service: string;
+  date: string;
+  time: string;
+  carType: string;
+  status: string;
+}
+
 export default function AdminDashboard() {
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('appointments') || '[]');
+    const data: Appointment[] = JSON.parse(localStorage.getItem('appointments') || '[]');
     setAppointments(data);
   }, []);
 
-  const updateStatus = (index, status) => {
+  const updateStatus = (index: number, status: string) => {
     const updated = [...appointments];
     updated[index].status = status;
     setAppointments(updated);
@@ -34,7 +43,7 @@ export default function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((b, i) => (
+            {appointments.map((b: Appointment, i: number) => (
               <tr key={i}>
                 <td>{b.service}</td>
                 <td>{b.date}</td>
@@ -42,8 +51,18 @@ export default function AdminDashboard() {
                 <td>{b.carType}</td>
                 <td>{b.status}</td>
                 <td>
-                  <button className="btn btn-success btn-sm me-2" onClick={() => updateStatus(i, 'Approved')}>Approve</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => updateStatus(i, 'Rejected')}>Reject</button>
+                  <button
+                    className="btn btn-success btn-sm me-2"
+                    onClick={() => updateStatus(i, 'Approved')}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => updateStatus(i, 'Rejected')}
+                  >
+                    Reject
+                  </button>
                 </td>
               </tr>
             ))}

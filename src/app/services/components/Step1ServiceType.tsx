@@ -1,7 +1,12 @@
 'use client';
 import React from 'react';
 
-export default function Step1ServiceType({ selected, onSelect }) {
+interface Step1ServiceTypeProps {
+  selected: string;
+  onSelect: (service: string) => void;
+}
+
+export default function Step1ServiceType({ selected, onSelect }: Step1ServiceTypeProps) {
   const services = ['Exterior Wash', 'Interior Detailing', 'Full Car Spa'];
 
   return (

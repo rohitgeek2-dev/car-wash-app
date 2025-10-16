@@ -1,7 +1,12 @@
 'use client';
 import React from 'react';
 
-export default function Step3CarType({ selected, onSelect }) {
+interface Step3CarTypeProps {
+  selected: string;
+  onSelect: (carType: string) => void;
+}
+
+export default function Step3CarType({ selected, onSelect }: Step3CarTypeProps) {
   const types = ['SUV', 'Sedan', 'Hatchback', 'Coupe', 'Convertible'];
 
   return (
