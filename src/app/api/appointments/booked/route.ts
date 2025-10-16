@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const bookings = await prisma.appointment.findMany({
       where: { date: new Date(date) },
       select: { time: true },
-    });
+    }); 
 
 
    const bookedTimes = bookings.map((b: Appointment) => {
