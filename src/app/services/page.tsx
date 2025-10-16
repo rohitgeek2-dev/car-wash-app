@@ -75,7 +75,7 @@ export default function ServicesPage() {
   return (
     <div>
       {/* Hero Section */}
-      <div className="hero">
+      <div className="hero"> 
         <div className="overlay">
           <div className="container hero-content">
             <h1>Our Services</h1>
