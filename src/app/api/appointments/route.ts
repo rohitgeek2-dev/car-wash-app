@@ -13,32 +13,38 @@ export async function GET(req: Request) {
   });
 
   // Return only booked times
-  return new Response(JSON.stringify(appointments.map(a => a.time)));
+  return new Response(
+    JSON.stringify(
+      appointments.map((a: { time: string }) => a.time)
+    )
+  );
 }
 
 export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // ✅ Try to create the appointment
+    // Try to create the appointment
     let appointment;
     try {
       appointment = await prisma.appointment.create({ data });
     } catch (err: any) {
       if (err.code === 'P2002') {
-        // Unique constraint failed
         return new Response(
           JSON.stringify({ error: "This time slot is already booked" }),
           { status: 400 }
         );
       }
-      throw err; // re-throw other errors
+      throw err;
     }
 
     // Gmail transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+      auth: { 
+        user: process.env.GMAIL_USER, 
+        pass: process.env.GMAIL_APP_PASSWORD 
+      },
     });
 
     const htmlMessage = `
@@ -60,11 +66,13 @@ export async function POST(req: Request) {
       html: htmlMessage,
     });
 
-    return new Response(JSON.stringify({ message: "Booking sent successfully", appointment }), { status: 200 });
+    return new Response(
+      JSON.stringify({ message: "Booking sent successfully", appointment }),
+      { status: 200 }
+    );
 
   } catch (err) {
     console.error("Error:", err);
     return new Response(JSON.stringify({ error: "Booking not sent" }), { status: 500 });
   }
 }
-
