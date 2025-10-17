@@ -76,7 +76,7 @@ export default function Step4Review({
       </div>
 
       <div className="review-actions">
-        <button onClick={onEdit} className="btn btn-secondary">Edit</button>
+        <button onClick={onEdit} className="btn btn-secondary">Edit</button> 
         <button
           onClick={handleConfirm}
           disabled={isSubmitting || !data.name || !data.email}
