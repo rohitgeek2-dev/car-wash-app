@@ -11,7 +11,7 @@ const poppinsFont = Poppins({
   variable: "--font-poppins", 
   subsets: ["latin"],
   weight: ["600", "700"],
-});
+}); 
 
 const robotoFont = Roboto({
   variable: "--font-roboto",
