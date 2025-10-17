@@ -1,7 +1,6 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 
-// Define the shape of your form data
 interface FormData {
   service: string;
   date: string;
@@ -11,7 +10,6 @@ interface FormData {
   email: string;
 }
 
-// Props for Step4Review component
 interface Step4ReviewProps {
   data: FormData;
   setFormData: (data: FormData) => void;
@@ -27,6 +25,22 @@ export default function Step4Review({
   onConfirm,
   isSubmitting,
 }: Step4ReviewProps) {
+  const [emailError, setEmailError] = useState('');
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleConfirm = () => {
+    if (!validateEmail(data.email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    setEmailError('');
+    onConfirm();
+  };
+
   return (
     <div className="step4-review-container">
       <h2 className="step4-title">Review Your Appointment</h2>
@@ -53,17 +67,18 @@ export default function Step4Review({
         <label className="form-label">Your Email</label>
         <input
           type="email"
-          className="form-control"
+          className={`form-control ${emailError ? 'is-invalid' : ''}`}
           value={data.email}
           onChange={(e) => setFormData({ ...data, email: e.target.value })}
           required
         />
+        {emailError && <small className="text-danger">{emailError}</small>}
       </div>
 
       <div className="review-actions">
         <button onClick={onEdit} className="btn btn-secondary">Edit</button>
         <button
-          onClick={onConfirm}
+          onClick={handleConfirm}
           disabled={isSubmitting || !data.name || !data.email}
           className="btn btn-success"
         >
