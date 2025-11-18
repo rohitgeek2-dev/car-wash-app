@@ -75,7 +75,7 @@ export default function Step4Review({
         {emailError && <small className="text-danger">{emailError}</small>}
       </div>
 
-      <div className="review-actions">
+      <div className="review-actions"> 
         <button onClick={onEdit} className="btn btn-secondary">Edit</button> 
         <button
           onClick={handleConfirm}
