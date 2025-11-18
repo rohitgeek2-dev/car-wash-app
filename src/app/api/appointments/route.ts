@@ -3,14 +3,12 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    // Only call req.json() once
     const data = await req.json();
     console.log("Incoming booking data:", data);
 
-    // Prepare appointment data for Prisma
     const appointmentData = {
       service: data.service,
-      date: new Date(data.date).toISOString().split("T")[0], // YYYY-MM-DD for DateOnly
+      date: new Date(data.date).toISOString().split("T")[0], // YYYY-MM-DD
       time: data.time,
       carType: data.carType,
       name: data.name,
@@ -18,12 +16,10 @@ export async function POST(req: Request) {
       status: data.status || "Pending",
     };
 
-    // Create appointment in database
+    // Create appointment
     let appointment;
     try {
-      appointment = await prisma.appointment.create({
-        data: appointmentData
-      });
+      appointment = await prisma.appointment.create({ data: appointmentData });
     } catch (err: any) {
       console.error("Prisma create error:", err);
       if (err.code === "P2002") {
@@ -62,16 +58,15 @@ export async function POST(req: Request) {
       });
     } catch (emailErr) {
       console.error("Email sending error:", emailErr);
-      // Do NOT fail the booking if email fails
     }
 
-    return new Response(
-      JSON.stringify({ message: "Booking sent successfully", appointment }),
-      { status: 200 }
-    );
+    return new Response(JSON.stringify({ message: "Booking sent successfully", appointment }), { status: 200 });
 
   } catch (err) {
-    console.error("Unhandled error:", err);
-    return new Response(JSON.stringify({ error: "Booking not sent" }), { status: 500 });
+    console.error("Booking API Error:", err);
+    return new Response(
+      JSON.stringify({ error: "Booking not sent", details: err instanceof Error ? err.message : String(err) }),
+      { status: 500 }
+    );
   }
 }
