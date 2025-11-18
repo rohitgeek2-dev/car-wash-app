@@ -5,10 +5,10 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // Convert date string to a JS Date object
+    // Convert date string to YYYY-MM-DD (Prisma DateOnly expects string)
     const appointmentData = {
       service: data.service,
-      date: new Date(data.date + "T00:00:00"), // <--- convert string to Date at midnight
+      date: new Date(data.date).toISOString().split("T")[0], // "2025-12-05"
       time: data.time,
       carType: data.carType,
       name: data.name,
@@ -19,9 +19,7 @@ export async function POST(req: Request) {
     // Create appointment
     let appointment;
     try {
-      appointment = await prisma.appointment.create({
-        data: appointmentData,
-      });
+      appointment = await prisma.appointment.create({ data: appointmentData });
     } catch (err: any) {
       if (err.code === "P2002") {
         return new Response(
@@ -44,12 +42,12 @@ export async function POST(req: Request) {
     const htmlMessage = `
       <h3>New Booking Submission</h3>
       <p><strong>Service:</strong> ${data.service}</p>
-      <p><strong>Date:</strong> ${data.date}</p>
+      <p><strong>Date:</strong> ${appointmentData.date}</p>
       <p><strong>Time:</strong> ${data.time}</p>
       <p><strong>Car Type:</strong> ${data.carType}</p>
       <p><strong>Name:</strong> ${data.name}</p>
       <p><strong>Email:</strong> ${data.email}</p>
-      <p><strong>Status:</strong> ${data.status || "Pending"}</p>
+      <p><strong>Status:</strong> ${appointmentData.status}</p>
     `;
 
     await transporter.sendMail({
@@ -57,7 +55,7 @@ export async function POST(req: Request) {
       to: process.env.GMAIL_USER,
       replyTo: data.email,
       subject: "New Booking Form Submission",
-      html: htmlMessage, 
+      html: htmlMessage,
     });
 
     return new Response(
@@ -66,7 +64,7 @@ export async function POST(req: Request) {
     );
 
   } catch (err) {
-    console.error("Booking error:", err);
+    console.error("Error:", err);
     return new Response(JSON.stringify({ error: "Booking not sent" }), { status: 500 });
   }
 }
