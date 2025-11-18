@@ -1,35 +1,29 @@
 import nodemailer from "nodemailer";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const date = searchParams.get("date");
-
-  if (!date) return new Response(JSON.stringify([]));
-
-  const appointments = await prisma.appointment.findMany({
-    where: { date },
-    select: { time: true },
-  });
-
-  // Return only booked times
-  return new Response(
-    JSON.stringify(
-      appointments.map((a: { time: string }) => a.time)
-    )
-  );
-}
-
 export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // Try to create the appointment
+    // Convert date string to a JS Date object
+    const appointmentData = {
+      service: data.service,
+      date: new Date(data.date + "T00:00:00"), // <--- convert string to Date at midnight
+      time: data.time,
+      carType: data.carType,
+      name: data.name,
+      email: data.email,
+      status: data.status || "Pending",
+    };
+
+    // Create appointment
     let appointment;
     try {
-      appointment = await prisma.appointment.create({ data });
+      appointment = await prisma.appointment.create({
+        data: appointmentData,
+      });
     } catch (err: any) {
-      if (err.code === 'P2002') {
+      if (err.code === "P2002") {
         return new Response(
           JSON.stringify({ error: "This time slot is already booked" }),
           { status: 400 }
@@ -38,12 +32,12 @@ export async function POST(req: Request) {
       throw err;
     }
 
-    // Gmail transporter
+    // Send email
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: { 
-        user: process.env.GMAIL_USER, 
-        pass: process.env.GMAIL_APP_PASSWORD 
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
       },
     });
 
@@ -55,7 +49,7 @@ export async function POST(req: Request) {
       <p><strong>Car Type:</strong> ${data.carType}</p>
       <p><strong>Name:</strong> ${data.name}</p>
       <p><strong>Email:</strong> ${data.email}</p>
-      <p><strong>Status:</strong> ${data.status}</p>
+      <p><strong>Status:</strong> ${data.status || "Pending"}</p>
     `;
 
     await transporter.sendMail({
@@ -63,7 +57,7 @@ export async function POST(req: Request) {
       to: process.env.GMAIL_USER,
       replyTo: data.email,
       subject: "New Booking Form Submission",
-      html: htmlMessage,
+      html: htmlMessage, 
     });
 
     return new Response(
@@ -72,7 +66,7 @@ export async function POST(req: Request) {
     );
 
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Booking error:", err);
     return new Response(JSON.stringify({ error: "Booking not sent" }), { status: 500 });
   }
 }

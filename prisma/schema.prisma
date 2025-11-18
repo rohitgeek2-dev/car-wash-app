@@ -3,14 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Appointment {
   id        Int      @id @default(autoincrement())
   service   String
-  date      String
+  date      DateTime @db.Date // store only the date
   time      String
   carType   String
   name      String
@@ -18,6 +18,6 @@ model Appointment {
   status    String   @default("Pending")
   createdAt DateTime @default(now())
 
-  @@unique([date, time]) // ✅ ensures a time slot can be booked only once per date
+  @@unique([date, time])
 }
 

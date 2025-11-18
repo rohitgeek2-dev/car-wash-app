@@ -24,18 +24,14 @@ export const metadata: Metadata = {
   description: "Wash and care inner and outer full services",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${poppinsFont.variable} ${robotoFont.variable}`}>
-      <body>
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
+   <html lang="en" className={`${poppinsFont.variable} ${robotoFont.variable}`}>
+  <body suppressHydrationWarning>
+    <Header />
+    {children}
+    <Footer />
+  </body>
+</html>
   );
 }
