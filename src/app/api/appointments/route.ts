@@ -2,24 +2,17 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import nodemailer from "nodemailer";
 
-// 🔥 Fix timezone: Convert "2025-12-01" → "2025-12-01T12:00:00"
-function toLocalNoon(dateString: string) {
-  const d = new Date(dateString);
-  d.setHours(12, 0, 0, 0); // Set time to noon to avoid UTC shifting
-  return d;
-}
-
 export async function POST(req: Request) {
   try {
     const data = await req.json();
     console.log("📥 Incoming booking data:", data);
 
     // ------------------------------
-    // ✅ FIXED DATE (No more 1-day earlier)
+    // ✅ FIXED DATE — store only YYYY-MM-DD (no UTC issue)
     // ------------------------------
-   const appointmentData = {
+    const appointmentData = {
       service: data.service,
-      date: String(data.date).split("T")[0],  // FIXED
+      date: String(data.date).split("T")[0], // keep original selected date
       time: data.time,
       carType: data.carType,
       name: data.name,
@@ -27,11 +20,10 @@ export async function POST(req: Request) {
       status: data.status || "Pending",
     };
 
-
     let appointment;
 
     // ------------------------------
-    // ✅ DATABASE SAVE
+    // ✅ SAVE TO DATABASE
     // ------------------------------
     try {
       appointment = await prisma.appointment.create({
@@ -47,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // ------------------------------
-    // ✅ EMAIL NOTIFICATION
+    // ✅ SEND EMAIL (Admin + User)
     // ------------------------------
     try {
       const transporter = nodemailer.createTransport({
@@ -60,13 +52,13 @@ export async function POST(req: Request) {
 
       await transporter.sendMail({
         from: `"Car Wash Booking" <${process.env.GMAIL_USER}>`,
-        to: `${process.env.GMAIL_USER}, ${appointmentData.email}`, // admin + user
+        to: `${process.env.GMAIL_USER}, ${appointmentData.email}`,
         replyTo: appointmentData.email,
         subject: "Booking Confirmation",
         html: `
           <h2>Your Booking is Confirmed</h2>
           <p><strong>Service:</strong> ${appointmentData.service}</p>
-          <p><strong>Date:</strong> ${appointmentData.date.toDateString()}</p>
+          <p><strong>Date:</strong> ${appointmentData.date}</p>
           <p><strong>Time:</strong> ${appointmentData.time}</p>
           <p><strong>Car Type:</strong> ${appointmentData.carType}</p>
           <p><strong>Name:</strong> ${appointmentData.name}</p>
@@ -78,7 +70,7 @@ export async function POST(req: Request) {
     }
 
     // ------------------------------
-    // ✅ SUCCESS RESPONSE
+    // ✅ RESPONSE
     // ------------------------------
     return NextResponse.json(
       { message: "Booking sent successfully", appointment },
