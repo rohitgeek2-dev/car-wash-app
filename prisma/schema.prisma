@@ -10,7 +10,7 @@ datasource db {
 model Appointment {
   id        Int      @id @default(autoincrement())
   service   String
-  date      DateTime        // IMPORTANT: remove @db.Date
+  date      String   // <— FIXED: store as string, not DateTime
   time      String
   carType   String
   name      String

@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
     const appointmentData = {
       service: data.service,
-      date: new Date(`${data.date}T00:00:00`),
+      date: data.date,
       time: data.time,
       carType: data.carType,
       name: data.name,
