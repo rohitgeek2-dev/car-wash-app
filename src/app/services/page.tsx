@@ -49,9 +49,11 @@ export default function ServicesPage() {
 
       if (!res.ok) {
         const result = await res.json();
-        alert(result.error || 'Failed to confirm appointment.');
+        console.error("API Error:", result); // 👈 THIS SHOWS REAL ERROR
+        alert("Something went wrong. Please check console.");
         return;
       }
+
 
       alert('Appointment Confirmed!');
       // Optional: reset form
