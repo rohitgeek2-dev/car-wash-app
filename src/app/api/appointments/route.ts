@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
     const appointmentData = {
       service: data.service,
-      date: new Date(data.date), // do NOT use toISOString here
+      date: new Date(`${data.date}T00:00:00`),
       time: data.time,
       carType: data.carType,
       name: data.name,
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
       await transporter.sendMail({
         from: `"Car Wash Booking" <${process.env.GMAIL_USER}>`,
-        to: process.env.GMAIL_USER,
+        to: `${process.env.GMAIL_USER}, ${appointmentData.email}`,
         replyTo: appointmentData.email,
         subject: "New Booking Form Submission",
         html: `
