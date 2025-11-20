@@ -10,7 +10,7 @@ datasource db {
 model Appointment {
   id        Int      @id @default(autoincrement())
   service   String
-  date      DateTime @db.Date // store only the date
+  date      DateTime        // IMPORTANT: remove @db.Date
   time      String
   carType   String
   name      String
@@ -20,4 +20,3 @@ model Appointment {
 
   @@unique([date, time])
 }
-

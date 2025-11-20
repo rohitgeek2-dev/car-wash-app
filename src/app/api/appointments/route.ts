@@ -1,17 +1,15 @@
-import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
     const data = await req.json();
     console.log("📥 Incoming booking data:", data);
 
-    // ------------------------------
-    // ✅ PREPARE DATA
-    // ------------------------------
     const appointmentData = {
       service: data.service,
-      date: new Date(data.date).toISOString(), // FULL ISO format
+      date: new Date(data.date), // do NOT use toISOString here
       time: data.time,
       carType: data.carType,
       name: data.name,
@@ -21,9 +19,6 @@ export async function POST(req: Request) {
 
     let appointment;
 
-    // ------------------------------
-    // ✅ CREATE APPOINTMENT
-    // ------------------------------
     try {
       appointment = await prisma.appointment.create({
         data: appointmentData,
@@ -31,18 +26,12 @@ export async function POST(req: Request) {
     } catch (err: any) {
       console.error("🔥 Prisma create error:", err);
 
-      return new Response(
-        JSON.stringify({
-          error: "Database error",
-          details: err?.message || JSON.stringify(err),
-        }),
+      return NextResponse.json(
+        { error: "Database error", details: err.message },
         { status: 500 }
       );
     }
 
-    // ------------------------------
-    // ✅ SEND EMAIL (DOESN’T BLOCK BOOKING)
-    // ------------------------------
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -52,47 +41,35 @@ export async function POST(req: Request) {
         },
       });
 
-      const htmlMessage = `
-        <h3>New Booking Submission</h3>
-        <p><strong>Service:</strong> ${appointmentData.service}</p>
-        <p><strong>Date:</strong> ${appointmentData.date}</p>
-        <p><strong>Time:</strong> ${appointmentData.time}</p>
-        <p><strong>Car Type:</strong> ${appointmentData.carType}</p>
-        <p><strong>Name:</strong> ${appointmentData.name}</p>
-        <p><strong>Email:</strong> ${appointmentData.email}</p>
-        <p><strong>Status:</strong> ${appointmentData.status}</p>
-      `;
-
       await transporter.sendMail({
         from: `"Car Wash Booking" <${process.env.GMAIL_USER}>`,
         to: process.env.GMAIL_USER,
         replyTo: appointmentData.email,
         subject: "New Booking Form Submission",
-        html: htmlMessage,
+        html: `
+          <h3>New Booking</h3>
+          <p>Service: ${appointmentData.service}</p>
+          <p>Date: ${appointmentData.date}</p>
+          <p>Time: ${appointmentData.time}</p>
+          <p>Car: ${appointmentData.carType}</p>
+          <p>Name: ${appointmentData.name}</p>
+          <p>Email: ${appointmentData.email}</p>
+          <p>Status: ${appointmentData.status}</p>
+        `,
       });
     } catch (emailErr) {
-      console.error("📧 Email sending error (ignored):", emailErr);
+      console.error("📧 Email error:", emailErr);
+      // don't block booking
     }
 
-    // ------------------------------
-    // ✅ SUCCESS RESPONSE
-    // ------------------------------
-    return new Response(
-      JSON.stringify({
-        message: "Booking sent successfully",
-        appointment,
-      }),
+    return NextResponse.json(
+      { message: "Booking sent successfully", appointment },
       { status: 200 }
     );
-
   } catch (err: any) {
-    console.error("❌ GLOBAL Booking API Error:", err);
-
-    return new Response(
-      JSON.stringify({
-        error: "Booking not sent",
-        details: err?.message || String(err),
-      }),
+    console.error("❌ API Error:", err);
+    return NextResponse.json(
+      { error: "Booking not sent", details: err.message },
       { status: 500 }
     );
   }
