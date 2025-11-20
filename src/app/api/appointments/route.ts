@@ -6,15 +6,16 @@ export async function POST(req: Request) {
     const data = await req.json();
     console.log("Incoming booking data:", data);
 
-    const appointmentData = {
-      service: data.service,
-      date: new Date(data.date).toISOString().split("T")[0], // YYYY-MM-DD
-      time: data.time,
-      carType: data.carType,
-      name: data.name,
-      email: data.email,
-      status: data.status || "Pending",
-    };
+      const appointmentData = {
+        service: data.service,
+        date: new Date(data.date).toISOString(),  // FIXED
+        time: data.time,
+        carType: data.carType,
+        name: data.name,
+        email: data.email,
+        status: data.status || "Pending",
+      };
+
 
     let appointment;
 
