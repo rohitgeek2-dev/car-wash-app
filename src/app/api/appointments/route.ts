@@ -16,19 +16,30 @@ export async function POST(req: Request) {
       status: data.status || "Pending",
     };
 
-    // Create appointment
     let appointment;
+
+    // ------------------------------
+    // ✅ CREATE APPOINTMENT IN DB
+    // ------------------------------
     try {
-      appointment = await prisma.appointment.create({ data: appointmentData });
+      appointment = await prisma.appointment.create({
+        data: appointmentData,
+      });
     } catch (err: any) {
-      console.error("Prisma create error:", err);
-      if (err.code === "P2002") {
-        return new Response(JSON.stringify({ error: "This time slot is already booked" }), { status: 400 });
-      }
-      return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+      console.error("🔥 Prisma create error:", err);
+
+      return new Response(
+        JSON.stringify({
+          error: "Database error",
+          details: err.message || "Unknown Prisma error",
+        }),
+        { status: 500 }
+      );
     }
 
-    // Send email
+    // ------------------------------
+    // ✅ SEND EMAIL NOTIFICATION
+    // ------------------------------
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -56,16 +67,27 @@ export async function POST(req: Request) {
         subject: "New Booking Form Submission",
         html: htmlMessage,
       });
-    } catch (emailErr) {
-      console.error("Email sending error:", emailErr);
+    } catch (emailErr: any) {
+      console.error("📧 Email sending error:", emailErr);
+      // Email failing should NOT break booking
     }
 
-    return new Response(JSON.stringify({ message: "Booking sent successfully", appointment }), { status: 200 });
-
-  } catch (err) {
-    console.error("Booking API Error:", err);
+    // ------------------------------
+    // ✅ FINAL RESPONSE
+    // ------------------------------
     return new Response(
-      JSON.stringify({ error: "Booking not sent", details: err instanceof Error ? err.message : String(err) }),
+      JSON.stringify({ message: "Booking sent successfully", appointment }),
+      { status: 200 }
+    );
+
+  } catch (err: any) {
+    console.error("❌ Booking API Global Error:", err);
+    
+    return new Response(
+      JSON.stringify({
+        error: "Booking not sent",
+        details: err.message || "Unexpected error",
+      }),
       { status: 500 }
     );
   }
