@@ -17,15 +17,16 @@ export async function POST(req: Request) {
     // ------------------------------
     // ✅ FIXED DATE (No more 1-day earlier)
     // ------------------------------
-    const appointmentData = {
+   const appointmentData = {
       service: data.service,
-      date: toLocalNoon(data.date), // FIXED
+      date: String(data.date).split("T")[0],  // FIXED
       time: data.time,
       carType: data.carType,
       name: data.name,
       email: data.email,
       status: data.status || "Pending",
     };
+
 
     let appointment;
 
