@@ -4,23 +4,25 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    console.log("Incoming booking data:", data);
+    console.log("📥 Incoming booking data:", data);
 
-      const appointmentData = {
-        service: data.service,
-        date: new Date(data.date).toISOString(),  // FIXED
-        time: data.time,
-        carType: data.carType,
-        name: data.name,
-        email: data.email,
-        status: data.status || "Pending",
-      };
-
+    // ------------------------------
+    // ✅ PREPARE DATA
+    // ------------------------------
+    const appointmentData = {
+      service: data.service,
+      date: new Date(data.date).toISOString(), // FULL ISO format
+      time: data.time,
+      carType: data.carType,
+      name: data.name,
+      email: data.email,
+      status: data.status || "Pending",
+    };
 
     let appointment;
 
     // ------------------------------
-    // ✅ CREATE APPOINTMENT IN DB
+    // ✅ CREATE APPOINTMENT
     // ------------------------------
     try {
       appointment = await prisma.appointment.create({
@@ -32,14 +34,14 @@ export async function POST(req: Request) {
       return new Response(
         JSON.stringify({
           error: "Database error",
-          details: err.message || "Unknown Prisma error",
+          details: err?.message || JSON.stringify(err),
         }),
         { status: 500 }
       );
     }
 
     // ------------------------------
-    // ✅ SEND EMAIL NOTIFICATION
+    // ✅ SEND EMAIL (DOESN’T BLOCK BOOKING)
     // ------------------------------
     try {
       const transporter = nodemailer.createTransport({
@@ -68,26 +70,28 @@ export async function POST(req: Request) {
         subject: "New Booking Form Submission",
         html: htmlMessage,
       });
-    } catch (emailErr: any) {
-      console.error("📧 Email sending error:", emailErr);
-      // Email failing should NOT break booking
+    } catch (emailErr) {
+      console.error("📧 Email sending error (ignored):", emailErr);
     }
 
     // ------------------------------
-    // ✅ FINAL RESPONSE
+    // ✅ SUCCESS RESPONSE
     // ------------------------------
     return new Response(
-      JSON.stringify({ message: "Booking sent successfully", appointment }),
+      JSON.stringify({
+        message: "Booking sent successfully",
+        appointment,
+      }),
       { status: 200 }
     );
 
   } catch (err: any) {
-    console.error("❌ Booking API Global Error:", err);
-    
+    console.error("❌ GLOBAL Booking API Error:", err);
+
     return new Response(
       JSON.stringify({
         error: "Booking not sent",
-        details: err.message || "Unexpected error",
+        details: err?.message || String(err),
       }),
       { status: 500 }
     );
