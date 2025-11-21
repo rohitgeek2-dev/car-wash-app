@@ -8,7 +8,7 @@ export default function Footer() {
       <Container>
         <p className="mb-1">© {new Date().getFullYear()} ShineRide.</p>
         <p className="mb-0">
-          Designed by <a href="#" className="text-decoration-none text-muted"> -- Rohit Kumar</a>
+          Developed by <a href="#" className="text-decoration-none text-muted"> -- Rohit Kumar</a>
         </p>
       </Container>
     </footer>
