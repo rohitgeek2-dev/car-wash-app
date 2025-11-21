@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     );
 
   } catch (err: any) {
-    console.error("❌ GLOBAL API Error:", err);
+    console.error("❌ GLOBAL API Error:", err); 
     return NextResponse.json(
       { error: "Booking not sent", details: err.message },
       { status: 500 }
