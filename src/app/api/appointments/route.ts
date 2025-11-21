@@ -57,9 +57,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // -----------------------------------------
-    // ✅ SEND CONFIRMATION EMAIL
-    // -----------------------------------------
+// -----------------------------------------
+// ✅ SEND EMAIL TO ADMIN ONLY (NOT USER)
+// -----------------------------------------
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -71,11 +71,11 @@ export async function POST(req: Request) {
 
       await transporter.sendMail({
         from: `"Car Wash Booking" <${process.env.GMAIL_USER}>`,
-        to: `${process.env.GMAIL_USER}, ${appointmentData.email}`,
+        to: process.env.GMAIL_USER,
         replyTo: appointmentData.email,
-        subject: "Booking Confirmation",
+        subject: "New Booking Request (Pending Approval)",
         html: `
-          <h2>Your Booking is Confirmed</h2>
+          <h2>New Booking Request (Pending)</h2>
           <p><strong>Service:</strong> ${appointmentData.service}</p>
           <p><strong>Date:</strong> ${appointmentData.date}</p>
           <p><strong>Time:</strong> ${appointmentData.time}</p>
