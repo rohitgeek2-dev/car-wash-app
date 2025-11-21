@@ -10,12 +10,22 @@ interface Step2DateTimeProps {
 }
 
 export default function Step2DateTime({ selectedDate, selectedTime, onSelect }: Step2DateTimeProps) {
-  const [date, setDate] = useState<Date | null>(selectedDate ? new Date(selectedDate) : null);
+  // ⛔ FIX: do NOT convert selectedDate to new Date()
+  const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState(selectedTime || '');
   const [error, setError] = useState('');
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
 
-  // Generate time slots dynamically from 9 AM to 6 PM
+  // Preload date into DatePicker UI (safe)
+  useEffect(() => {
+    if (selectedDate) {
+      // Construct a date using local timezone—not UTC shift
+      const parts = selectedDate.split('-'); // yyyy-mm-dd
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      setDate(d);
+    }
+  }, [selectedDate]);
+
   const timeSlots = useMemo(() => {
     const slots: string[] = [];
     for (let hour = 9; hour <= 17; hour++) {
@@ -26,13 +36,15 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }: 
     return slots;
   }, []);
 
-  // Fetch booked slots whenever date changes
   useEffect(() => {
     if (!date) return;
-    const formattedDate = date.toISOString().split('T')[0];
-    fetch(`/api/appointments?date=${formattedDate}`)
+
+    // Convert to string using LOCAL date, not UTC
+    const formatted = date.toLocaleDateString('en-CA'); // yyyy-mm-dd
+
+    fetch(`/api/appointments?date=${formatted}`)
       .then(res => res.json())
-      .then((data) => setBookedSlots(data))
+      .then(data => setBookedSlots(data))
       .catch(err => console.error(err));
   }, [date]);
 
@@ -41,12 +53,15 @@ export default function Step2DateTime({ selectedDate, selectedTime, onSelect }: 
       setError('Please select both a date and time.');
     } else {
       setError('');
-      onSelect(date.toISOString().split('T')[0], time);
+
+      // Correct: local date → "YYYY-MM-DD"
+      const formatted = date.toLocaleDateString('en-CA');
+      onSelect(formatted, time);
     }
   };
 
-  const isWeekday = (date: Date) => {
-    const day = date.getDay();
+  const isWeekday = (d: Date) => {
+    const day = d.getDay();
     return day !== 0 && day !== 6;
   };
 
