@@ -58,9 +58,14 @@ export default function Step4Review({
           type="text"
           className="form-control"
           value={data.name}
-          onChange={(e) => setFormData({ ...data, name: e.target.value })}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value.trim() === "" && value !== "") return;
+            setFormData({ ...data, name: value });
+          }}
           required
         />
+
       </div>
 
       <div className="form-group">
