@@ -71,7 +71,7 @@ export async function POST(req: Request) {
 
       await transporter.sendMail({
         from: `"Car Wash Booking" <${process.env.GMAIL_USER}>`,
-        to: process.env.GMAIL_USER,
+        to: `${process.env.GMAIL_USER}, ${appointmentData.email}`,
         replyTo: appointmentData.email,
         subject: "New Booking Request (Pending Approval)",
         html: `
