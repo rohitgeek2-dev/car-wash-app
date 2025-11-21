@@ -5,42 +5,61 @@ import nodemailer from "nodemailer";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    console.log("📥 Incoming booking data:", data);
 
-    // ------------------------------
-    // ✅ FIXED DATE — store only YYYY-MM-DD (no UTC issue)
-    // ------------------------------
+    // 🔍 Log raw incoming data
+    console.log("📥 RAW Incoming booking data:", data);
+
+    // -----------------------------------------
+    // ✅ SANITIZE & NORMALIZE DATE + TIME
+    // -----------------------------------------
+    const rawDate = data.date ? data.date.toString().trim() : "";
+    const rawTime = data.time ? data.time.toString().trim() : "";
+
+    if (!rawDate) {
+      return NextResponse.json(
+        { error: "Invalid date", details: "Date cannot be empty" },
+        { status: 400 }
+      );
+    }
+
+    // If date is ISO (2025-12-05T00:00:00Z)
+    let finalDate = rawDate;
+    if (rawDate.includes("T")) {
+      finalDate = rawDate.split("T")[0]; // Convert ISO → YYYY-MM-DD
+    }
+
+    // Final clean payload
     const appointmentData = {
-      service: data.service,
-      date: String(data.date).split("T")[0], // keep original selected date
-      time: data.time,
-      carType: data.carType,
-      name: data.name,
-      email: data.email,
-      status: data.status || "Pending",
+      service: data.service?.toString() || "",
+      date: finalDate, // ALWAYS a clean string
+      time: rawTime,
+      carType: data.carType?.toString() || "",
+      name: data.name?.toString() || "",
+      email: data.email?.toString() || "",
+      status: "Pending",
     };
 
-    let appointment;
+    console.log("📦 Final processed appointment:", appointmentData);
 
-    // ------------------------------
+    // -----------------------------------------
     // ✅ SAVE TO DATABASE
-    // ------------------------------
+    // -----------------------------------------
+    let appointment;
     try {
       appointment = await prisma.appointment.create({
         data: appointmentData,
       });
     } catch (err: any) {
       console.error("🔥 Prisma create error:", err);
-
       return NextResponse.json(
         { error: "Database error", details: err.message },
         { status: 500 }
       );
     }
 
-    // ------------------------------
-    // ✅ SEND EMAIL (Admin + User)
-    // ------------------------------
+    // -----------------------------------------
+    // ✅ SEND CONFIRMATION EMAIL
+    // -----------------------------------------
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -69,9 +88,9 @@ export async function POST(req: Request) {
       console.error("📧 Email sending error:", emailErr);
     }
 
-    // ------------------------------
-    // ✅ RESPONSE
-    // ------------------------------
+    // -----------------------------------------
+    // ✅ SUCCESS RESPONSE
+    // -----------------------------------------
     return NextResponse.json(
       { message: "Booking sent successfully", appointment },
       { status: 200 }
