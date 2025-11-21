@@ -4,7 +4,7 @@
 */
 
 -- Alter `date` column type safely
-ALTER TABLE "Appointment"
+ALTER TABLE "Appointment" 
 ALTER COLUMN "date" TYPE TIMESTAMP(3) USING "date"::timestamp;
 
 -- Re-create the unique index (if needed)
