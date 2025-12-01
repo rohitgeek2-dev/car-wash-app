@@ -7,16 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          Int            @id @default(autoincrement())
+  name        String
+  email       String         @unique
+  password    String         // store hashed password
+  createdAt   DateTime       @default(now())
+
+  appointments Appointment[]
+}
+
 model Appointment {
   id        Int      @id @default(autoincrement())
   service   String
-  date      String   // <— FIXED: store as string, not DateTime
+  date      String   // stored as string
   time      String
   carType   String
   name      String
   email     String
   status    String   @default("Pending")
   createdAt DateTime @default(now())
+
+  // NEW: link booking to user
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@unique([date, time])
 }
